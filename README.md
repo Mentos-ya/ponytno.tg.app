@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# Понятно MiniApp TG
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Telegram Mini App для распознавания текста с фотографий меню с помощью OCR (оптического распознавания символов).
 
-Currently, two official plugins are available:
+## 🚀 Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **📸 Съемка фото** - встроенная камера с интерфейсом для съемки меню
+- **🖼️ Загрузка изображений** - выбор фото из галереи устройства
+- **🔍 OCR распознавание** - автоматическое распознавание текста с помощью Tesseract.js
+- **🎯 Умная классификация** - автоматическое определение заголовков, описаний и цен
+- **🎨 Визуальная подсветка** - цветовая маркировка распознанных элементов:
+  - 🔴 **Заголовки** - нежно-розовая подсветка
+  - 🟡 **Описания** - нежно-желтая подсветка  
+  - 🟢 **Цены** - нежно-зеленая подсветка
+- **📱 Telegram интеграция** - полная поддержка Telegram WebApp SDK
+- **🛠️ Режим отладки** - детальное логирование для разработки
 
-## React Compiler
+## 🛠️ Технологии
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19 + TypeScript + Vite
+- **OCR**: Tesseract.js v5 (поддержка русского и английского языков)
+- **Telegram**: @twa-dev/sdk для интеграции с Telegram
+- **Тестирование**: Playwright для E2E тестов
+- **Сборка**: Vite с оптимизацией для production
 
-## Expanding the ESLint configuration
+## 🚀 Быстрый старт
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Установка зависимостей
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Запуск в режиме разработки
+```bash
+npm run dev
 ```
+
+### Сборка для production
+```bash
+npm run build
+```
+
+### Запуск тестов
+```bash
+npm run test:e2e
+```
+
+### Запуск лог-сервера (для отладки)
+```bash
+npm run logs
+```
+
+## 📱 Использование
+
+1. **Откройте приложение** в Telegram или браузере
+2. **Сделайте фото** меню через встроенную камеру или выберите из галереи
+3. **Дождитесь обработки** - приложение автоматически распознает текст
+4. **Просмотрите результат** - распознанные элементы будут подсвечены цветами
+
+## 🔧 Режимы отладки
+
+- `?debug=1` - включить отладочную информацию
+- `?test=1` - включить тестовый режим
+- `?mockOcr=1` - использовать mock-данные для OCR (для тестирования)
+
+## 📁 Структура проекта
+
+```
+src/
+├── App.tsx          # Основной компонент приложения
+├── App.css          # Стили приложения
+├── main.tsx         # Точка входа
+└── assets/          # Статические ресурсы
+
+tests/
+├── ocr-highlight.spec.ts      # E2E тесты для OCR
+└── fixtures/                   # Тестовые изображения
+```
+
+## 🎯 Реализованные функции
+
+### ✅ Основной функционал
+- [x] Интеграция с Telegram WebApp SDK
+- [x] Интерфейс камеры с полноэкранным режимом
+- [x] Загрузка изображений из галереи
+- [x] OCR распознавание текста (Tesseract.js)
+- [x] Умная классификация текста (заголовки/описания/цены)
+- [x] Визуальная подсветка распознанных элементов
+- [x] Адаптивный дизайн для мобильных устройств
+
+### ✅ Техническая реализация
+- [x] TypeScript для типобезопасности
+- [x] React Hooks для управления состоянием
+- [x] Canvas API для отрисовки подсветки
+- [x] ResizeObserver для отслеживания размеров
+- [x] Система логирования для отладки
+- [x] E2E тесты с Playwright
+
+### ✅ Оптимизация
+- [x] Предобработка изображений для улучшения OCR
+- [x] Группировка слов по строкам для лучшей визуализации
+- [x] Поддержка высоких DPI экранов
+- [x] Оптимизация производительности Canvas
+
+## 🔮 Планы развития
+
+- [ ] Сохранение истории распознаваний
+- [ ] Экспорт результатов в различные форматы
+- [ ] Улучшение алгоритмов классификации
+- [ ] Поддержка дополнительных языков
+- [ ] Интеграция с внешними API для перевода
+
+## 📄 Лицензия
+
+MIT License
