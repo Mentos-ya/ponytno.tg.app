@@ -198,12 +198,12 @@ function classifyText(word: OcrWord, allWords: OcrWord[]): TextCategory {
   return 'description'
 }
 
-// Цвета для категорий
+// Цвета для категорий (яркие цвета с хорошей видимостью текста)
 function getCategoryColor(category: TextCategory): string {
   switch (category) {
-    case 'title': return 'rgba(255, 180, 180, 0.6)' // нежно-розовый
-    case 'description': return 'rgba(255, 240, 150, 0.6)' // нежно-жёлтый
-    case 'price': return 'rgba(180, 240, 180, 0.6)' // нежно-зелёный
+    case 'title': return 'rgba(255, 100, 100, 0.4)' // ярко-розовый, 40% непрозрачности
+    case 'description': return 'rgba(255, 200, 50, 0.4)' // ярко-жёлтый, 40% непрозрачности
+    case 'price': return 'rgba(100, 255, 100, 0.4)' // ярко-зелёный, 40% непрозрачности
   }
 }
 
@@ -436,6 +436,7 @@ function App() {
         height: number
         originalIndex: number
         category: TextCategory
+        text: string
       }
       
       const wordRects: WordRect[] = words.map((w, idx) => {
@@ -455,8 +456,16 @@ function App() {
         }
         // Классифицируем каждое слово
         const category = classifyText(w, words)
-        return { x, y, width, height, originalIndex: idx, category }
+        return { x, y, width, height, originalIndex: idx, category, text: w.text }
       })
+      
+      // Отладка: выводим информацию о первых нескольких словах
+      addLog('Отладка wordRects:', wordRects.slice(0, 5).map(r => ({
+        text: r.text,
+        category: r.category,
+        coords: `${Math.round(r.x)},${Math.round(r.y)} - ${Math.round(r.width)}x${Math.round(r.height)}`,
+        bbox: words[r.originalIndex].bbox
+      })))
       
       // Шаг 2: Группируем слова по строкам (по Y-координатам)
       const lines: WordRect[][] = []
@@ -479,6 +488,14 @@ function App() {
           lines.push([rect])
         }
       }
+      
+      // Отладка: выводим информацию о строках
+      addLog('Отладка строк:', lines.map((line, idx) => ({
+        lineIndex: idx,
+        wordsCount: line.length,
+        words: line.map(w => w.text),
+        yRange: `${Math.round(Math.min(...line.map(w => w.y)))}-${Math.round(Math.max(...line.map(w => w.y + w.height)))}`
+      })))
       
       // Шаг 3: Для каждой строки находим общую высоту и Y-позицию
       const padding = 1 // минимальный отступ
