@@ -15,10 +15,15 @@ type OcrProvider = {
   recognize: (imageUrl: string, onProgress?: OcrProgressCallback) => Promise<OcrResult>
 }
 
-// Перехватываем console.log для автоматической отправки на лог-сервер
+// Перехватываем console.log для автоматической отправки на лог-сервер (только в dev режиме)
 const originalConsoleLog = console.log
 const originalConsoleError = console.error
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+
 const sendToLogServer = (level: string, args: any[]) => {
+  // Отправляем логи только в режиме разработки
+  if (!isDevelopment) return
+  
   const message = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')
   const timestamp = new Date().toLocaleTimeString('ru-RU')
   fetch('http://localhost:3030/log', {

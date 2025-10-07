@@ -5,11 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run deploy:preview",
+    "build:only": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "logs": "node log-server.cjs"
+    "logs": "node log-server.cjs",
+    "check-api": "node check-api.js",
+    "deploy:preview": "npx vercel --yes",
+    "deploy:prod": "npx vercel --prod --yes",
+    "build:preview": "npm run build:only && npm run deploy:preview",
+    "yandex:setup": "./setup-yandex.sh",
+    "vercel:setup": "./setup-vercel.sh",
+    "env:setup": "./setup-env.sh",
+    "alias:setup": "./setup-alias.sh",
+    "vercel:login": "npx vercel login",
+    "vercel:env": "npx vercel env add",
+    "vercel:env:ls": "npx vercel env ls"
   },
   "dependencies": {
     "@twa-dev/sdk": "^8.0.2",
