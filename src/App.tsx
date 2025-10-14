@@ -15,21 +15,34 @@ type OcrProvider = {
   recognize: (imageUrl: string, onProgress?: OcrProgressCallback) => Promise<OcrResult>
 }
 
-// Перехватываем console.log для автоматической отправки на лог-сервер (только в dev режиме)
+// Перехватываем console.log для автоматической отправки на лог-сервер
 const originalConsoleLog = console.log
 const originalConsoleError = console.error
 const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const urlParams = new URLSearchParams(window.location.search)
+const isDebugParam = urlParams.has('debug')
+const externalLogUrl = urlParams.get('logUrl') || ''
+const logEndpoint = externalLogUrl || (isDevelopment ? 'http://localhost:3030/log' : '/api/log')
 
 const sendToLogServer = (level: string, args: any[]) => {
-  // Отправляем логи только в режиме разработки
-  if (!isDevelopment) return
-  
+  // В dev шлём на локальный сервер. В проде/предпросмотре — на API хоста (HTTPS)
+  // или на явный внешний адрес из ?logUrl=. Также можно форсировать через ?debug.
+  if (!isDevelopment && !isDebugParam && !externalLogUrl) return
+
   const message = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')
-  const timestamp = new Date().toLocaleTimeString('ru-RU')
-  fetch('http://localhost:3030/log', {
+  const payload: any = {
+    message: `[${level}] ${message}`,
+    timestamp: new Date().toLocaleTimeString('ru-RU')
+  }
+  if (!isDevelopment) {
+    payload.url = window.location.href
+    payload.userAgent = navigator.userAgent
+    payload.level = level
+  }
+  fetch(logEndpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: `[${level}] ${message}`, timestamp })
+    body: JSON.stringify(payload)
   }).catch(() => {})
 }
 

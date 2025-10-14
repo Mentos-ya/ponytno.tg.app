@@ -36,22 +36,25 @@ export default async function handler(req, res) {
 
     console.log('Sending to Yandex GPT:', { text, context })
 
-    const gptResponse = await fetch('https://llm.api.cloud.yandex.net/v1/chat/completions', {
+    const gptResponse = await fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Api-Key ${apiKey}`
       },
       body: JSON.stringify({
-        model: `gpt://${folderId}/yandexgpt/rc`,
+        modelUri: `gpt://${folderId}/yandexgpt/latest`,
+        completionOptions: {
+          stream: false,
+          temperature: 0.1,
+          maxTokens: 10
+        },
         messages: [
           {
             role: 'user',
-            content: prompt
+            text: prompt
           }
-        ],
-        temperature: 0.1,
-        max_tokens: 10
+        ]
       })
     })
 
@@ -63,7 +66,7 @@ export default async function handler(req, res) {
     }
 
     const gptData = await gptResponse.json()
-    const classification = gptData.choices?.[0]?.message?.content?.trim().toLowerCase()
+    const classification = gptData.result?.alternatives?.[0]?.message?.text?.trim().toLowerCase()
 
     console.log('GPT response:', { text, classification })
 

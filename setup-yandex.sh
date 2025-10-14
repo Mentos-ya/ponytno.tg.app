@@ -64,3 +64,4 @@ echo "🚀 Теперь можно использовать команды:"
 echo "   - yc iam service-account list"
 echo "   - yc vision api-key list"
 echo "   - yc resource-manager folder list"
+

@@ -28,3 +28,4 @@ echo "   - vercel --prod --yes (деплой в продакшн)"
 echo "   - vercel env add (добавление переменных окружения)"
 echo "   - vercel env ls (просмотр переменных окружения)"
 echo "   - vercel logs (просмотр логов)"
+
