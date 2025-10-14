@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+// Загружаем переменные окружения
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 // Скрипт для проверки статуса API endpoints
 import https from 'https';
 import http from 'http';

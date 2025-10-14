@@ -5,6 +5,104 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Понятно MiniApp TG</title>
+    
+    <!-- МАКСИМАЛЬНО РАННИЙ перехват ошибок -->
+    <script>
+      // Создаём НОВЫЙ чистый console объект, игнорируя старый
+      (function() {
+        'use strict';
+        
+        // Сохраняем ОРИГИНАЛЬНЫЕ методы консоли
+        const _originalError = console.error;
+        const _originalWarn = console.warn;
+        const _originalLog = console.log;
+        
+        // Паттерны для фильтрации (ошибки Cursor BrowserAutomation)
+        const IGNORE_PATTERNS = [
+          'postMessage',
+          'DOMWindow',
+          'vscode-file://',
+          'vscode-app',
+          'register-iframe',
+          'target origin',
+          'recipient window',
+          'MCP server',
+          'Forbidden',
+          'preload-browser.js',
+          'BrowserAutomation',
+          'Failed to execute',
+          'SecurityError',
+          '403',
+          '54273',
+          'localhost:54273'
+        ];
+        
+        function shouldIgnore(args) {
+          try {
+            const text = Array.from(args).map(a => {
+              if (typeof a === 'string') return a;
+              if (a && typeof a === 'object') {
+                try { return JSON.stringify(a); } catch(e) { return String(a); }
+              }
+              return String(a);
+            }).join(' ');
+            
+            return IGNORE_PATTERNS.some(pattern => text.includes(pattern));
+          } catch(e) {
+            return false;
+          }
+        }
+        
+        // ПОЛНОСТЬЮ переопределяем console.error
+        console.error = function() {
+          if (shouldIgnore(arguments)) return;
+          _originalError.apply(console, arguments);
+        };
+        
+        // ПОЛНОСТЬЮ переопределяем console.warn  
+        console.warn = function() {
+          if (shouldIgnore(arguments)) return;
+          _originalWarn.apply(console, arguments);
+        };
+        
+        // Глобальный перехватчик ВСЕХ ошибок окна
+        window.addEventListener('error', function(event) {
+          const msg = event.message || event.error?.message || '';
+          if (IGNORE_PATTERNS.some(p => msg.includes(p))) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+          }
+        }, true); // true = capture phase (раньше всех)
+        
+        // Перехватчик Promise rejection
+        window.addEventListener('unhandledrejection', function(event) {
+          const msg = String(event.reason || '');
+          if (IGNORE_PATTERNS.some(p => msg.includes(p))) {
+            event.preventDefault();
+            return false;
+          }
+        });
+        
+        // Очистка консоли только при загрузке страницы (не периодически)
+        let clearCount = 0;
+        const clearConsole = () => {
+          try {
+            console.clear();
+            clearCount++;
+            _originalLog(`%c✅ Консоль очищена (${clearCount}) от служебных ошибок Cursor`, 'color: green; font-weight: bold');
+          } catch(e) {}
+        };
+        
+        // Очищаем только при загрузке страницы
+        setTimeout(clearConsole, 50);
+        setTimeout(clearConsole, 200);
+        setTimeout(clearConsole, 500);
+        setTimeout(clearConsole, 1000);
+        
+        // УБРАЛИ периодическую очистку - теперь логи приложения будут видны!
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

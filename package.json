@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@twa-dev/sdk": "^8.0.2",
+    "dotenv": "^17.2.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tesseract.js": "^5.1.1"
